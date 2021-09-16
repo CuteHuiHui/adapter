@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration>
+
+    <context id="context" defaultModelType="flat" targetRuntime="MyBatis3">
+        <!-- 文件编码 -->
+        <property name="javaFileEncoding" value="UTF-8"/>
+        <!-- 分页相关 -->
+        <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"/>
+        <!-- 带上序列化接口 -->
+        <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>
+        <!-- 自定义的注释生成插件 -->
+        <plugin type="com.chrm.mybatis.generator.plugins.CommentPlugin">
+            <!-- 抑制警告 -->
+            <property name="suppressTypeWarnings" value="true"/>
+            <!-- 是否去除自动生成的注释 true：是 ：false：否 -->
+            <property name="suppressAllComments" value="false"/>
+            <!-- 是否生成注释代时间戳-->
+            <property name="suppressDate" value="true"/>
+        </plugin>
+        <!-- 整合lombok-->
+        <plugin type="com.chrm.mybatis.generator.plugins.LombokPlugin">
+            <property name="hasLombok" value="true"/>
+        </plugin>
+
+        <!-- 数据库的相关配置 -->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://127.0.0.1:3306/ids_adapter?serverTimezone=UTC"
+                        userId="root"
+                        password="123456">
+            <!--解决连接到别的数据库表问题-->
+            <!--<property name="nullCatalogMeansCurrent" value="true" />
+            <property name="useInformationSchema" value="true"/>-->
+        </jdbcConnection>
+
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+        <!-- 实体类生成的位置 -->
+        <javaModelGenerator targetPackage="com.dbapp.ahcloud.adapter.model" targetProject="src/main/java">
+            <property name="enableSubPackages" value="false"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <!-- Mapper.xml 文件的位置 -->
+        <sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources">
+            <property name="enableSubPackages" value="false"/>
+        </sqlMapGenerator>
+
+        <!-- Mapper 接口文件的位置 -->
+        <javaClientGenerator targetPackage="com.dbapp.ahcloud.adapter.dao" targetProject="src/main/java"
+                             type="XMLMAPPER">
+            <property name="enableSubPackages" value="false"/>
+        </javaClientGenerator>
+
+<!--        <table tableName="ips_policy"-->
+<!--               enableCountByExample="false"-->
+<!--               enableUpdateByExample="false"-->
+<!--               enableDeleteByExample="false"-->
+<!--               enableSelectByExample="false">-->
+<!--            <generatedKey column="id" sqlStatement="JDBC" identity="true"/>-->
+<!--        </table>-->
+<!--        <table tableName="security_policy"-->
+<!--               enableCountByExample="false"-->
+<!--               enableUpdateByExample="false"-->
+<!--               enableDeleteByExample="false"-->
+<!--               enableSelectByExample="false">-->
+<!--            <generatedKey column="id" sqlStatement="JDBC" identity="true"/>-->
+<!--        </table>-->
+        <table tableName="security_policy_copy1"
+               enableCountByExample="false"
+               enableUpdateByExample="false"
+               enableDeleteByExample="false"
+               enableSelectByExample="false">
+            <generatedKey column="id" sqlStatement="JDBC" identity="true"/>
+        </table>
+
+
+    </context>
+</generatorConfiguration>
