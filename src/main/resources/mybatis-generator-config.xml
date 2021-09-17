@@ -70,7 +70,7 @@
 <!--               enableSelectByExample="false">-->
 <!--            <generatedKey column="id" sqlStatement="JDBC" identity="true"/>-->
 <!--        </table>-->
-        <table tableName="security_policy_copy1"
+        <table tableName="ids_policy"
                enableCountByExample="false"
                enableUpdateByExample="false"
                enableDeleteByExample="false"

@@ -3,15 +3,11 @@ package com.dbapp.ahcloud.adapter.req;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.util.List;
 
-/**
- * @author lousaibiao
- * @since 2021/5/26
- */
+
 @Data
-public class SecurityPolicyReq implements Serializable {
+public class SecurityPolicyReq {
     @JsonProperty("security_policy_id")
     private String securityPolicyId;
     @JsonProperty("tenant_id")
