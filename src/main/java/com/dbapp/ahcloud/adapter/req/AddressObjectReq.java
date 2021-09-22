@@ -1,6 +1,5 @@
 package com.dbapp.ahcloud.adapter.req;
 
-import com.dbapp.ahcloud.adapter.model.AddressObject;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
