@@ -44,8 +44,7 @@ public class SecurityPolicyServiceImpl implements SecurityPolicyService {
                 .eq(SecurityPolicy::getSecurityPolicyId, policyId)
                 .eq(SecurityPolicy::getIsDeleted, YesOrNo.NO.getValue()));
         if (CollectionUtils.isEmpty(securityPolicies)) {
-            String error = "securityPolicyId:" + policyId + "安全策略不存在或者已删除";
-            throw ServiceInvokeException.newException(error);
+            throw ServiceInvokeException.newException("securityPolicyId:" + policyId + "安全策略不存在或者已删除");
         } else {
             SecurityPolicy securityPolicy = new SecurityPolicy();
             securityPolicy.setIsDeleted(YesOrNo.YES.getValue());
@@ -60,8 +59,7 @@ public class SecurityPolicyServiceImpl implements SecurityPolicyService {
                 .eq(SecurityPolicy::getSecurityPolicyId, securityPolicyReq.getSecurityPolicyId())
                 .eq(SecurityPolicy::getIsDeleted, YesOrNo.NO.getValue()));
         if (CollectionUtils.isEmpty(securityPolicies)) {
-            String error = "securityPolicyId:" + securityPolicyReq.getSecurityPolicyId() + "安全策略不存在或者已删除";
-            throw ServiceInvokeException.newException(error);
+            throw ServiceInvokeException.newException("securityPolicyId:" + securityPolicyReq.getSecurityPolicyId() + "安全策略不存在或者已删除");
         } else {
             SecurityPolicy securityPolicy = this.getSecurityPolicy(securityPolicyReq);
             securityPolicyMapper.update(securityPolicy,

@@ -33,7 +33,7 @@ public class IdsPolicyController {
 
     @PostMapping({"/policy"})
     public void addIdsPolicy(@RequestBody String requestString, @RequestHeader(value = "origin_json",required = false) String originHeader) {
-        log.info("addIdsPolicy requestString is: " + requestString + ", origin header is: " + originHeader);
+        log.info("IDS策略addIdsPolicy requestString is: " + requestString + ", origin header is: " + originHeader);
         IdsPolicyReq idsPolicyReq = JSONObject.parseObject(JSONObject.parseObject(requestString).getJSONObject("data").toJSONString(), IdsPolicyReq.class);
         idsPolicyService.addIdsPolicy(idsPolicyReq);
     }
@@ -41,7 +41,7 @@ public class IdsPolicyController {
     @DeleteMapping({"/policy/{ids_policy_id}"})
     public void deleteIdsPolicy(@PathVariable("ids_policy_id") String idsPolicyId,
                                        @RequestHeader(value = "origin_json",required = false) String originHeader) {
-        log.info("deleteIdsPolicy idsPolicyId is: " + idsPolicyId + ", origin header is: " + originHeader);
+        log.info("IDS策略deleteIdsPolicy idsPolicyId is: " + idsPolicyId + ", origin header is: " + originHeader);
         idsPolicyService.delteIdsPolicy(idsPolicyId);
     }
 
@@ -49,7 +49,7 @@ public class IdsPolicyController {
     public void modifyIdsPolicy(@PathVariable("ids_policy_id") String idsPolicyId,
                                        @RequestHeader(value = "origin_json",required = false) String originHeader,
                                        @RequestBody String requestString) {
-        log.info("modifyIdsPolicy idsPolicyId is: " + idsPolicyId + ",requestString is: " +requestString + ",origin header is: " + originHeader);
+        log.info("IDS策略modifyIdsPolicy idsPolicyId is: " + idsPolicyId + ",requestString is: " +requestString + ",origin header is: " + originHeader);
         IdsPolicyReq idsPolicyReq = JSONObject.parseObject(JSONObject.parseObject(requestString).getJSONObject("data").toJSONString(), IdsPolicyReq.class);
         idsPolicyReq.setIdsPolicyId(idsPolicyId);
         idsPolicyService.modifyIdsPolicy(idsPolicyReq);

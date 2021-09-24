@@ -32,7 +32,7 @@ public class SecurityPolicyController {
     @PostMapping({"/policy"})
     public void addSecurityPolicy(@RequestBody String requestString, @RequestHeader(value = "origin_json", required =
             false) String originHeader) {
-        log.info("addSecurityPolicy requestString is: " + requestString + ", origin header is: " + originHeader);
+        log.info("安全策略addSecurityPolicy requestString is: " + requestString + ", origin header is: " + originHeader);
         SecurityPolicyReq securityPolicyReq =
                 JSONObject.parseObject(JSONObject.parseObject(requestString).getJSONObject("data").toJSONString(),
                         SecurityPolicyReq.class);
@@ -42,14 +42,14 @@ public class SecurityPolicyController {
     @DeleteMapping({"/policy/{policy_id}"})
     public void deleteSecurityPolicy(@PathVariable("policy_id") String policyId,
                                      @RequestHeader(value = "origin_json", required = false) String originHeader) {
-        log.info("deleteSecurityPolicy policy_id is: " + policyId + ", origin header is: " + originHeader);
+        log.info("安全策略deleteSecurityPolicy policy_id is: " + policyId + ", origin header is: " + originHeader);
         securityPolicyService.delteSecurityPolicy(policyId);
     }
 
     @PutMapping({"/policy/{policy_id}"})
     public void modifySecurityPolicy(@PathVariable("policy_id") String policyId, @RequestBody String requestString,
                                      @RequestHeader(value = "origin_json", required = false) String originHeader) {
-        log.info("modifySecurityPolicy policy_id is: " + policyId + ",requestString is: " + requestString + ",origin header" +
+        log.info("安全策略modifySecurityPolicy policy_id is: " + policyId + ",requestString is: " + requestString + ",origin header" +
                 " is: " + originHeader);
         SecurityPolicyReq securityPolicyReq =
                 JSONObject.parseObject(JSONObject.parseObject(requestString).getJSONObject("data").toJSONString(),

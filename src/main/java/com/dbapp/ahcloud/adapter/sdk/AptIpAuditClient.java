@@ -9,6 +9,7 @@ import com.dbapp.xplan.common.enums.YesOrNo;
 import com.dbapp.xplan.common.exception.ServiceInvokeException;
 import com.dbapp.xplan.common.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -55,7 +56,7 @@ public class AptIpAuditClient {
                     .execute().body();
 
             JSONObject jsonObject = JSONUtil.parseObj(responseStr);
-            if (!Objects.isNull(jsonObject.get(CODE)) && jsonObject.get(CODE).equals(YesOrNo.NO.getValue())) {
+            if (StringUtils.isNotBlank(jsonObject.get(CODE).toString()) && jsonObject.get(CODE).equals(YesOrNo.NO.getValue())) {
                 this.accessKeyIdConfig = jsonObject.get(ACCESS_KEY_ID_CONFIG).toString();
                 this.accessKeySecretConfig = jsonObject.get(ACCESS_KEY_SECRET_CONFIG).toString();
             } else {
@@ -81,7 +82,7 @@ public class AptIpAuditClient {
                     .execute().body();
 
             JSONObject jsonObject = JSONUtil.parseObj(responseStr);
-            if (!Objects.isNull(jsonObject.get(CODE)) && jsonObject.get(CODE).equals(YesOrNo.NO.getValue())) {
+            if (StringUtils.isNotBlank(jsonObject.get(CODE).toString()) && jsonObject.get(CODE).equals(YesOrNo.NO.getValue())) {
                 this.token = jsonObject.get(TOKEN).toString();
             } else {
                 throw ServiceInvokeException.newException(jsonObject.toString());
@@ -97,7 +98,7 @@ public class AptIpAuditClient {
      */
     public void addOrUpdate(IpAuditDTO req) {
         String reqStr = JsonUtils.toJSONString(req);
-        log.info("addOrUpdate req is:{}", JsonUtils.toJSONString(req));
+        log.info("新增或修改IP检测req is:{}", JsonUtils.toJSONString(req));
 
         String responseStr;
         try {
@@ -107,7 +108,7 @@ public class AptIpAuditClient {
                     .execute().body();
 
             JSONObject jsonObject = JSONUtil.parseObj(responseStr);
-            if (Objects.isNull(jsonObject.get(ERROR_CODE)) || !jsonObject.get(ERROR_CODE).equals(HttpStatus.HTTP_OK)) {
+            if (StringUtils.isBlank(jsonObject.get(ERROR_CODE).toString()) || !jsonObject.get(ERROR_CODE).equals(HttpStatus.HTTP_OK)) {
                 throw ServiceInvokeException.newException(jsonObject.toString());
             }
         } catch (Exception e) {
@@ -127,7 +128,7 @@ public class AptIpAuditClient {
                     .execute().body();
 
             JSONObject jsonObject = JSONUtil.parseObj(responseStr);
-            if (!Objects.isNull(jsonObject.get(ERROR_CODE)) && jsonObject.get(ERROR_CODE).equals(HttpStatus.HTTP_OK)) {
+            if (StringUtils.isNotBlank(jsonObject.get(ERROR_CODE).toString()) && jsonObject.get(ERROR_CODE).equals(HttpStatus.HTTP_OK)) {
                 List<IpAuditDTO> resp = com.alibaba.fastjson.JSONObject.parseArray(JSONUtil.parseObj(jsonObject.get(
                         "data")).get("data").toString(), IpAuditDTO.class);
                 return resp;
@@ -145,7 +146,7 @@ public class AptIpAuditClient {
      */
     public void delete(Integer[] ids) {
         String reqStr = JsonUtils.toJSONString(ids);
-        log.info("delete req is:{}", JsonUtils.toJSONString(ids));
+        log.info("删除IP检测ids is:{}", JsonUtils.toJSONString(ids));
 
         String responseStr;
         try {
@@ -155,7 +156,7 @@ public class AptIpAuditClient {
                     .execute().body();
 
             JSONObject jsonObject = JSONUtil.parseObj(responseStr);
-            if (Objects.isNull(jsonObject.get(ERROR_CODE)) || !jsonObject.get(ERROR_CODE).equals(HttpStatus.HTTP_OK)) {
+            if (StringUtils.isBlank(jsonObject.get(ERROR_CODE).toString()) || !jsonObject.get(ERROR_CODE).equals(HttpStatus.HTTP_OK)) {
                 throw ServiceInvokeException.newException(jsonObject.toString());
             }
         } catch (Exception e) {

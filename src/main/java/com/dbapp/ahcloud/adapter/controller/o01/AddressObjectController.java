@@ -25,7 +25,7 @@ public class AddressObjectController {
 
     @PostMapping({"/address"})
     public void addAddressObject(@RequestBody String requestString, @RequestHeader(value = "origin_json",required = false) String originHeader) {
-        log.info("addAddressObject requestString is: " + requestString + ", origin header is: " + originHeader);
+        log.info("地址对象addAddressObject requestString is: " + requestString + ", origin header is: " + originHeader);
         AddressObjectReq addressObjectReq = JSONObject.parseObject(JSONObject.parseObject(requestString).getJSONObject("data").toJSONString(), AddressObjectReq.class);
         addressObjectService.addAddressObject(addressObjectReq);
     }
@@ -33,14 +33,14 @@ public class AddressObjectController {
     @DeleteMapping({"/address/{ip_object_id}"})
     public void deleteAddressObject(@PathVariable("ip_object_id") String ipObjectId,
                                     @RequestHeader(value = "origin_json",required = false) String originHeader) {
-        log.info("deleteAddressObject ipObjectId is: " + ipObjectId + ", origin header is: " + originHeader);
+        log.info("地址对象deleteAddressObject ipObjectId is: " + ipObjectId + ", origin header is: " + originHeader);
         addressObjectService.deleteAddressObject(ipObjectId);
     }
 
     @PutMapping({"/address/{ip_object_id}"})
     public void modifyAddressObject(@PathVariable("ip_object_id") String ipObjectId,
                                     @RequestHeader(value = "origin_json",required = false) String originHeader, @RequestBody String requestString) {
-        log.info("modifyAddressObject object_id is: " + ipObjectId + ", origin header is: " + originHeader);
+        log.info("地址对象modifyAddressObject object_id is: " + ipObjectId + ", origin header is: " + originHeader);
         AddressObjectReq addressObjectReq = JSONObject.parseObject(JSONObject.parseObject(requestString).getJSONObject("data").toJSONString(), AddressObjectReq.class);
         addressObjectReq.setIpObjectId(ipObjectId);
         addressObjectService.modifyAddressObject(addressObjectReq);

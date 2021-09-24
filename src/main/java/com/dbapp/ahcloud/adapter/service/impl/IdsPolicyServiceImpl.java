@@ -2,7 +2,6 @@ package com.dbapp.ahcloud.adapter.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.dbapp.ahcloud.adapter.dao.IdsPolicyMapper;
 import com.dbapp.ahcloud.adapter.model.AddressObject;
 import com.dbapp.ahcloud.adapter.model.IdsPolicy;
@@ -23,6 +22,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -99,14 +99,16 @@ public class IdsPolicyServiceImpl implements IdsPolicyService {
 
     @Override
     public void delteIdsPolicy(String idsPolicyId) {
-        List<IdsPolicy> idsPolicies = idsPolicyMapper.selectList(new LambdaQueryWrapper<IdsPolicy>()
+        IdsPolicy idsPolicy = idsPolicyMapper.selectOne(new LambdaQueryWrapper<IdsPolicy>()
                 .eq(IdsPolicy::getIdsPolicyId, idsPolicyId)
                 .eq(IdsPolicy::getIsDeleted, YesOrNo.NO.getValue()));
-        if (CollectionUtils.isEmpty(idsPolicies)) {
-            String error = "idsPolicyId:" + idsPolicyId + "IDS策略不存在或者已删除";
-            throw ServiceInvokeException.newException(error);
-        }else {
-            IdsPolicy idsPolicy = new IdsPolicy();
+        if (Objects.isNull(idsPolicy)) {
+            throw ServiceInvokeException.newException("idsPolicyId:" + idsPolicyId + "IDS策略不存在或者已删除");
+        } else {
+            auditClient.getAccessKey();
+            auditClient.getToken();
+            auditClient.delete(JsonUtils.parseArray(idsPolicy.getAptIpAuditIds(),Integer.class).toArray(new Integer[]{}));
+
             idsPolicy.setIsDeleted(YesOrNo.YES.getValue());
             idsPolicyMapper.update(idsPolicy,
                     new LambdaQueryWrapper<IdsPolicy>().eq(IdsPolicy::getIdsPolicyId, idsPolicyId));
@@ -116,16 +118,15 @@ public class IdsPolicyServiceImpl implements IdsPolicyService {
 
     @Override
     public void modifyIdsPolicy(IdsPolicyReq idsPolicyReq) {
-        List<IdsPolicy> idsPolicies = idsPolicyMapper.selectList(new LambdaQueryWrapper<IdsPolicy>()
+        IdsPolicy idsPolicy = idsPolicyMapper.selectOne(new LambdaQueryWrapper<IdsPolicy>()
                 .eq(IdsPolicy::getIdsPolicyId, idsPolicyReq.getIdsPolicyId())
                 .eq(IdsPolicy::getIsDeleted, YesOrNo.NO.getValue()));
-        if (CollectionUtils.isEmpty(idsPolicies)) {
-            String error = "idsPolicyId:" + idsPolicyReq.getIdsPolicyId() + "IDS策略不存在或者已删除";
-            throw ServiceInvokeException.newException(error);
+        if (Objects.isNull(idsPolicy)) {
+            throw ServiceInvokeException.newException("idsPolicyId:" + idsPolicyReq.getIdsPolicyId() + "IDS策略不存在或者已删除");
         }else {
-            IdsPolicy idsPolicy = this.getIdsPolicy(idsPolicyReq);
-            idsPolicyMapper.update(idsPolicy,
-                    new LambdaQueryWrapper<IdsPolicy>().eq(IdsPolicy::getIdsPolicyId, idsPolicyReq.getIdsPolicyId()));
+//            IdsPolicy idsPolicy = this.getIdsPolicy(idsPolicyReq);
+//            idsPolicyMapper.update(idsPolicy,
+//                    new LambdaQueryWrapper<IdsPolicy>().eq(IdsPolicy::getIdsPolicyId, idsPolicyReq.getIdsPolicyId()));
         }
     }
 
