@@ -1,5 +1,7 @@
 package com.dbapp.ahcloud.adapter.sdk.req;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -8,7 +10,9 @@ import lombok.Data;
  * @version 1.0
  */
 @Data
-public class IpAuditReq {
+@Builder
+@AllArgsConstructor
+public class IpAuditDTO {
     private Integer id;
     private String ip;
     private String desc;

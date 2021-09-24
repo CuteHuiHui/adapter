@@ -2,18 +2,22 @@ package com.dbapp.ahcloud.adapter.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.dbapp.ahcloud.adapter.dao.SecurityPolicyMapper;
 import com.dbapp.ahcloud.adapter.model.SecurityPolicy;
 import com.dbapp.ahcloud.adapter.req.SecurityPolicyReq;
 import com.dbapp.ahcloud.adapter.service.SecurityPolicyService;
 import com.dbapp.xplan.common.enums.YesOrNo;
+import com.dbapp.xplan.common.exception.ServiceInvokeException;
 import com.dbapp.xplan.common.utils.BeanUtil;
 import com.dbapp.xplan.common.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 安全策略
@@ -40,7 +44,8 @@ public class SecurityPolicyServiceImpl implements SecurityPolicyService {
                 .eq(SecurityPolicy::getSecurityPolicyId, policyId)
                 .eq(SecurityPolicy::getIsDeleted, YesOrNo.NO.getValue()));
         if (CollectionUtils.isEmpty(securityPolicies)) {
-            log.error("policyId:{}不存在", policyId);
+            String error = "securityPolicyId:" + policyId + "安全策略不存在或者已删除";
+            throw ServiceInvokeException.newException(error);
         } else {
             SecurityPolicy securityPolicy = new SecurityPolicy();
             securityPolicy.setIsDeleted(YesOrNo.YES.getValue());
@@ -55,13 +60,33 @@ public class SecurityPolicyServiceImpl implements SecurityPolicyService {
                 .eq(SecurityPolicy::getSecurityPolicyId, securityPolicyReq.getSecurityPolicyId())
                 .eq(SecurityPolicy::getIsDeleted, YesOrNo.NO.getValue()));
         if (CollectionUtils.isEmpty(securityPolicies)) {
-            log.error("policyId:{}不存在", securityPolicyReq.getSecurityPolicyId());
+            String error = "securityPolicyId:" + securityPolicyReq.getSecurityPolicyId() + "安全策略不存在或者已删除";
+            throw ServiceInvokeException.newException(error);
         } else {
             SecurityPolicy securityPolicy = this.getSecurityPolicy(securityPolicyReq);
             securityPolicyMapper.update(securityPolicy,
                     new LambdaQueryWrapper<SecurityPolicy>().eq(SecurityPolicy::getSecurityPolicyId,
                             securityPolicyReq.getSecurityPolicyId()));
         }
+    }
+
+    @Override
+    public List<SecurityPolicy> getSecurityPolicies(List<String> securityPolicyIds) {
+        List<SecurityPolicy> securityPolicies = securityPolicyMapper.selectList(new LambdaQueryWrapper<SecurityPolicy>()
+                .in(SecurityPolicy::getSecurityPolicyId, securityPolicyIds)
+                .eq(SecurityPolicy::getIsDeleted, YesOrNo.NO.getValue()));
+        return CollectionUtils.isEmpty(securityPolicies) ? new ArrayList<>() : securityPolicies;
+    }
+
+    @Override
+    public SecurityPolicy getSecurityPolicy(String securityPolicyId) {
+        SecurityPolicy securityPolicy =
+                securityPolicyMapper.selectOne(Wrappers.<SecurityPolicy>lambdaQuery().eq(SecurityPolicy::getIsDeleted,
+                YesOrNo.NO.getValue()).eq(SecurityPolicy::getSecurityPolicyId, securityPolicyId));
+        if (Objects.isNull(securityPolicy)) {
+            log.error("securityPolicyId:" + securityPolicyId + "安全策略不存在或者已删除");
+        }
+        return securityPolicy;
     }
 
     /**

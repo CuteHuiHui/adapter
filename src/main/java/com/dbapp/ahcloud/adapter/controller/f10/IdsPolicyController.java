@@ -2,7 +2,6 @@ package com.dbapp.ahcloud.adapter.controller.f10;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dbapp.ahcloud.adapter.req.IdsPolicyReq;
-import com.dbapp.ahcloud.adapter.req.SecurityPolicyReq;
 import com.dbapp.ahcloud.adapter.service.impl.IdsPolicyServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,19 +39,19 @@ public class IdsPolicyController {
     }
 
     @DeleteMapping({"/policy/{ids_policy_id}"})
-    public void deleteIdsPolicy(@PathVariable("ids_policy_id") String ids_policy_id,
+    public void deleteIdsPolicy(@PathVariable("ids_policy_id") String idsPolicyId,
                                        @RequestHeader(value = "origin_json",required = false) String originHeader) {
-        log.info("deleteIdsPolicy ids_policy_id is: " + ids_policy_id + ", origin header is: " + originHeader);
-        idsPolicyService.delteIdsPolicy(ids_policy_id);
+        log.info("deleteIdsPolicy idsPolicyId is: " + idsPolicyId + ", origin header is: " + originHeader);
+        idsPolicyService.delteIdsPolicy(idsPolicyId);
     }
 
     @PutMapping({"/policy/{ids_policy_id}"})
-    public void modifyIdsPolicy(@PathVariable("ids_policy_id") String ids_policy_id,
+    public void modifyIdsPolicy(@PathVariable("ids_policy_id") String idsPolicyId,
                                        @RequestHeader(value = "origin_json",required = false) String originHeader,
                                        @RequestBody String requestString) {
-        log.info("modifyIdsPolicy ids_policy_id is: " + ids_policy_id + ",requestString is: " +requestString + ",origin header is: " + originHeader);
+        log.info("modifyIdsPolicy idsPolicyId is: " + idsPolicyId + ",requestString is: " +requestString + ",origin header is: " + originHeader);
         IdsPolicyReq idsPolicyReq = JSONObject.parseObject(JSONObject.parseObject(requestString).getJSONObject("data").toJSONString(), IdsPolicyReq.class);
-        idsPolicyReq.setIdsPolicyId(ids_policy_id);
+        idsPolicyReq.setIdsPolicyId(idsPolicyId);
         idsPolicyService.modifyIdsPolicy(idsPolicyReq);
     }
 

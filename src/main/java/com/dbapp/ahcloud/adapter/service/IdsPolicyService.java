@@ -12,7 +12,7 @@ public interface IdsPolicyService {
 
     void addIdsPolicy(IdsPolicyReq idsPolicyReq);
 
-    void delteIdsPolicy(String ids_policy_id);
+    void delteIdsPolicy(String idsPolicyId);
 
     void modifyIdsPolicy(IdsPolicyReq idsPolicyReq);
 

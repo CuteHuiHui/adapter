@@ -1,6 +1,9 @@
 package com.dbapp.ahcloud.adapter.service;
 
+import com.dbapp.ahcloud.adapter.model.AddressObject;
 import com.dbapp.ahcloud.adapter.req.AddressObjectReq;
+
+import java.util.List;
 
 /**
  * 安全策略
@@ -17,4 +20,5 @@ public interface AddressObjectService {
 
     void modifyAddressObject(AddressObjectReq addressObjectReq);
 
+    List<AddressObject> getAddressObjects(List<String> ipObjectIds);
 }
