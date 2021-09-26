@@ -1,12 +1,9 @@
 package com.dbapp.ahcloud.adapter.sdk;
 
-import com.dbapp.ahcloud.adapter.sdk.req.IpAuditDTO;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)//根据测试方法名字搞定执行顺序
 public class AptIpAuditSdkTest extends BaseTest {

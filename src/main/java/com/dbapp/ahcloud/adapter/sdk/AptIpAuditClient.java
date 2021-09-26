@@ -4,7 +4,7 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpStatus;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.dbapp.ahcloud.adapter.sdk.req.IpAuditDTO;
+import com.dbapp.ahcloud.adapter.sdk.dto.IpAuditDTO;
 import com.dbapp.xplan.common.enums.YesOrNo;
 import com.dbapp.xplan.common.exception.ServiceInvokeException;
 import com.dbapp.xplan.common.utils.JsonUtils;

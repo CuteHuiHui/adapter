@@ -1,4 +1,4 @@
-package com.dbapp.ahcloud.adapter.sdk.req;
+package com.dbapp.ahcloud.adapter.sdk.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
