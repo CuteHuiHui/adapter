@@ -45,12 +45,11 @@ public class AddressObjectServiceImpl implements AddressObjectService {
                 .eq(AddressObject::getIsDeleted, YesOrNo.NO.getValue()));
         if (CollectionUtils.isEmpty(addressObjects)) {
             throw ServiceInvokeException.newException("ipObjectId:" + ipObjectId + "地址对象不存在或者已删除");
-        } else {
-            AddressObject addressObject = new AddressObject();
-            addressObject.setIsDeleted(YesOrNo.YES.getValue());
-            addressObjectMapper.update(addressObject,
-                    new LambdaQueryWrapper<AddressObject>().eq(AddressObject::getIpObjectId, ipObjectId));
         }
+        AddressObject addressObject = new AddressObject();
+        addressObject.setIsDeleted(YesOrNo.YES.getValue());
+        addressObjectMapper.update(addressObject,
+                new LambdaQueryWrapper<AddressObject>().eq(AddressObject::getIpObjectId, ipObjectId));
     }
 
     @Override
@@ -59,13 +58,13 @@ public class AddressObjectServiceImpl implements AddressObjectService {
                 .eq(AddressObject::getIpObjectId, addressObjectReq.getIpObjectId())
                 .eq(AddressObject::getIsDeleted, YesOrNo.NO.getValue()));
         if (CollectionUtils.isEmpty(addressObjects)) {
-            throw ServiceInvokeException.newException("ipObjectId:" + addressObjectReq.getIpObjectId() + "地址对象不存在或者已删除");
-        } else {
-            AddressObject addressObject = this.getAddressObject(addressObjectReq);
-            addressObjectMapper.update(addressObject,
-                    new LambdaQueryWrapper<AddressObject>().eq(AddressObject::getIpObjectId,
-                            addressObjectReq.getIpObjectId()));
+            throw ServiceInvokeException.newException("ipObjectId:" + addressObjectReq.getIpObjectId() +
+                    "地址对象不存在或者已删除");
         }
+        AddressObject addressObject = this.getAddressObject(addressObjectReq);
+        addressObjectMapper.update(addressObject,
+                new LambdaQueryWrapper<AddressObject>().eq(AddressObject::getIpObjectId,
+                        addressObjectReq.getIpObjectId()));
     }
 
     @Override

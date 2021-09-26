@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+
 
 /**
  * 调用APT IP检测接口
@@ -42,6 +42,7 @@ public class AptIpAuditClient {
     private static final String EDIT_URL = "/config/ipaudit/edit";
     private static final String DELETE_URL = "/config/ipaudit/delete";
     private static final String LIST_URL = "/config/ipaudit/list";
+    private static final String GET_URL = "/config/ipaudit/get";
     private String accessKeyIdConfig;
     private String accessKeySecretConfig;
     private String token;
@@ -98,7 +99,7 @@ public class AptIpAuditClient {
      */
     public void addOrUpdate(IpAuditDTO req) {
         String reqStr = JsonUtils.toJSONString(req);
-        log.info("新增或修改IP检测req is:{}", JsonUtils.toJSONString(req));
+        log.info("新增或修改IP检测req:{}", JsonUtils.toJSONString(req));
 
         String responseStr;
         try {
@@ -146,7 +147,7 @@ public class AptIpAuditClient {
      */
     public void delete(Integer[] ids) {
         String reqStr = JsonUtils.toJSONString(ids);
-        log.info("删除IP检测ids is:{}", JsonUtils.toJSONString(ids));
+        log.info("删除IP检测ids:{}", JsonUtils.toJSONString(ids));
 
         String responseStr;
         try {
@@ -165,40 +166,30 @@ public class AptIpAuditClient {
     }
 
 
+    /**
+     * 查询IP检测
+     * @param id
+     */
+    public IpAuditDTO get(Integer id) {
+        log.info("查询IP检测id:{}", id);
 
-//    public void getVersion(String accessUrl) {
-//        log.info("accessUrl:{}", accessUrl);
-//
-//        String key = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MzIzMjI0MDQsInVzZXJuYW1lIjoibmVpYnVjZXNoaSJ9" +
-//                ".Jag0Qv1hglUtHOdNjB_Kx6E26afze7lRFBtLWWvsvJY";
-//
-//        HashMap<String, Object> paramMap = new HashMap<>(1);
-//        paramMap.put("id", "3");
-//
-//        String responseStr;
-//        try {
-//            responseStr = HttpRequest.get("https://10.20.144.143:10026/config/ipaudit/get?id=3")
-//                    .header("Authorization", key)
-//                    .form(paramMap)
-//                    .execute().body();
-//
-//            if (StringUtils.isNotBlank(responseStr)) {
-//                JSONObject jsonObject = JSONUtil.parseObj(responseStr);
-//                System.out.println(jsonObject);
-////                //成功
-////                if (!Objects.isNull(jsonObject.get(CODE)) && jsonObject.get(CODE).equals(HttpStatus.HTTP_OK)) {
-////                    ProductVersionDTO resp = new ProductVersionDTO();
-////                    resp.setVersion(jsonObject.getJSONObject(DATA).toBean(EDRVersionResponseDTO.class).getVersion
-// ());
-////                    return resp;
-////                } else {
-////                    throw ServiceInvokeException.newException(jsonObject.get(MESSAGE).toString());
-////                }
-//            }
-//        } catch (Exception e) {
-//            log.error("EDR查询版本号失败", e);
-////            return new ProductVersionDTO();
-//        }
-////        return new ProductVersionDTO();
-//    }
+        String responseStr;
+        try {
+            responseStr = HttpRequest.get(URL + GET_URL)
+                    .header(AUTHORIZATION, token)
+                    .form("id",id)
+                    .execute().body();
+
+            JSONObject jsonObject = JSONUtil.parseObj(responseStr);
+            if (StringUtils.isNotBlank(jsonObject.get(ERROR_CODE).toString()) && jsonObject.get(ERROR_CODE).equals(HttpStatus.HTTP_OK)) {
+                IpAuditDTO resp = com.alibaba.fastjson.JSONObject.parseObject(JSONUtil.parseObj(jsonObject.get(
+                        "data")).toString(), IpAuditDTO.class);
+                return resp;
+            } else {
+                throw ServiceInvokeException.newException(jsonObject.toString());
+            }
+        } catch (Exception e) {
+            throw ServiceInvokeException.newException("APT查询IP检测失败", e);
+        }
+    }
 }

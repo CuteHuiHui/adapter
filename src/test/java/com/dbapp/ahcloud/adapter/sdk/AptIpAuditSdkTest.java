@@ -36,10 +36,17 @@ public class AptIpAuditSdkTest extends BaseTest {
 //        aptIpAuditSdk.delete(idList.toArray(new Integer[]{}));
 //    }
 
+//    @Test
+//    public void e() {
+//        aptIpAuditSdk.list();
+//    }
+
     @Test
-    public void e() {
-        aptIpAuditSdk.list();
+    public void f() {
+        aptIpAuditSdk.get(100);
     }
+
+
 
 
 }

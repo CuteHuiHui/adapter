@@ -46,7 +46,48 @@ public class IdsPolicyServiceImpl implements IdsPolicyService {
 
     @Override
     public void addIdsPolicy(IdsPolicyReq idsPolicyReq) {
-        List<String> securityPolicyIds = idsPolicyReq.getSecurityPolicyIds();
+        //APT添加或修改IP检测
+        List<Integer> ids = this.addIpAudit(idsPolicyReq);
+
+        IdsPolicy idsPolicy = this.getIdsPolicy(idsPolicyReq);
+        idsPolicy.setAptIpAuditIds(JsonUtils.toJSONString(ids));
+        idsPolicyMapper.insert(idsPolicy);
+    }
+
+    /**
+     * APT添加IP检测
+     * @param idsPolicyReq
+     * @return
+     */
+    public List<Integer> addIpAudit(IdsPolicyReq idsPolicyReq) {
+        List<String> allIpAudits = this.getAllIpAudit(idsPolicyReq.getSecurityPolicyIds());
+
+        auditClient.getAccessKey();
+        auditClient.getToken();
+        try {
+            for (String ip : allIpAudits) {
+                auditClient.addOrUpdate(new IpAuditDTO(null, ip, idsPolicyReq.getDescription(),idsPolicyReq.getEnable()));
+            }
+        } catch (Exception e) {
+            log.error("APT添加或修改IP检测配置失败,开始删除此次已添加成功的");
+            List<Integer> needDelete =
+                    auditClient.list().stream().filter(o -> allIpAudits.contains(o.getIp())).map(IpAuditDTO::getId).collect(Collectors.toList());
+            auditClient.delete(needDelete.toArray(new Integer[]{}));
+            throw ServiceInvokeException.newException("APT添加或修改IP检测配置失败", e);
+        }
+        //此次添加成功至APT的IP检测id集合
+        List<Integer> ids = auditClient.list().stream().filter(o -> allIpAudits.contains(o.getIp())).map(IpAuditDTO::getId).collect(Collectors.toList());
+
+        return ids;
+    }
+
+
+    /**
+     * 获取所有检测IP
+     * @param securityPolicyIds
+     * @return
+     */
+    public List<String> getAllIpAudit(List<String> securityPolicyIds) {
         //获取安全策略
         List<SecurityPolicy> securityPolicies = securityPolicyService.getSecurityPolicies(securityPolicyIds);
 
@@ -63,26 +104,11 @@ public class IdsPolicyServiceImpl implements IdsPolicyService {
         List<AddressObject> addressObjects = addressObjectService.getAddressObjects(ipObjectIds);
 
         //获取所有需要检测的IP
-        List<String> totalAuditIps = new ArrayList<>();
+        List<String> allIpAudits = new ArrayList<>();
         addressObjects.stream().map(o -> JSONObject.parseArray(o.getObjectList(),
                 AddressObjectReq.ObjectListItem.class))
                 .map(o -> o.stream().map(AddressObjectReq.ObjectListItem::getAddress).collect(Collectors.toList()))
-                .collect(Collectors.toList()).forEach(o -> totalAuditIps.addAll(o));
-        auditClient.getAccessKey();
-        auditClient.getToken();
-        try {
-            for (String ip : totalAuditIps) {
-                auditClient.addOrUpdate(new IpAuditDTO(null, ip, idsPolicyReq.getDescription(),idsPolicyReq.getEnable()));
-            }
-        } catch (Exception e) {
-            log.error("APT添加或修改IP检测配置失败,开始删除此次已添加成功的");
-            List<Integer> needDelete =
-                    auditClient.list().stream().filter(o -> totalAuditIps.contains(o.getIp())).map(IpAuditDTO::getId).collect(Collectors.toList());
-            auditClient.delete(needDelete.toArray(new Integer[]{}));
-            throw ServiceInvokeException.newException("APT添加或修改IP检测配置失败", e);
-        }
-        //此次添加成功至APT的IP检测id集合
-        List<Integer> ids = auditClient.list().stream().filter(o -> totalAuditIps.contains(o.getIp())).map(IpAuditDTO::getId).collect(Collectors.toList());
+                .collect(Collectors.toList()).forEach(o -> allIpAudits.addAll(o));
 
         //TODO totalFilterIps
         //获取所有不需要检测的IP
@@ -92,9 +118,7 @@ public class IdsPolicyServiceImpl implements IdsPolicyService {
                 .map(o -> o.stream().map(AddressObjectReq.ObjectListItem::getAddress).collect(Collectors.toList()))
                 .collect(Collectors.toList()).forEach(o -> totalFilterIps.addAll(o));
 
-        IdsPolicy idsPolicy = this.getIdsPolicy(idsPolicyReq);
-        idsPolicy.setAptIpAuditIds(JsonUtils.toJSONString(ids));
-        idsPolicyMapper.insert(idsPolicy);
+        return allIpAudits;
     }
 
     @Override
@@ -104,16 +128,14 @@ public class IdsPolicyServiceImpl implements IdsPolicyService {
                 .eq(IdsPolicy::getIsDeleted, YesOrNo.NO.getValue()));
         if (Objects.isNull(idsPolicy)) {
             throw ServiceInvokeException.newException("idsPolicyId:" + idsPolicyId + "IDS策略不存在或者已删除");
-        } else {
-            auditClient.getAccessKey();
-            auditClient.getToken();
-            auditClient.delete(JsonUtils.parseArray(idsPolicy.getAptIpAuditIds(),Integer.class).toArray(new Integer[]{}));
-
-            idsPolicy.setIsDeleted(YesOrNo.YES.getValue());
-            idsPolicyMapper.update(idsPolicy,
-                    new LambdaQueryWrapper<IdsPolicy>().eq(IdsPolicy::getIdsPolicyId, idsPolicyId));
         }
+        auditClient.getAccessKey();
+        auditClient.getToken();
+        auditClient.delete(JsonUtils.parseArray(idsPolicy.getAptIpAuditIds(), Integer.class).toArray(new Integer[]{}));
 
+        idsPolicy.setIsDeleted(YesOrNo.YES.getValue());
+        idsPolicyMapper.update(idsPolicy,
+                new LambdaQueryWrapper<IdsPolicy>().eq(IdsPolicy::getIdsPolicyId, idsPolicyId));
     }
 
     @Override
@@ -123,11 +145,75 @@ public class IdsPolicyServiceImpl implements IdsPolicyService {
                 .eq(IdsPolicy::getIsDeleted, YesOrNo.NO.getValue()));
         if (Objects.isNull(idsPolicy)) {
             throw ServiceInvokeException.newException("idsPolicyId:" + idsPolicyReq.getIdsPolicyId() + "IDS策略不存在或者已删除");
-        }else {
-//            IdsPolicy idsPolicy = this.getIdsPolicy(idsPolicyReq);
-//            idsPolicyMapper.update(idsPolicy,
-//                    new LambdaQueryWrapper<IdsPolicy>().eq(IdsPolicy::getIdsPolicyId, idsPolicyReq.getIdsPolicyId()));
         }
+
+        List<Integer> ids = JsonUtils.parseArray(idsPolicy.getAptIpAuditIds(), Integer.class);
+        String description = idsPolicyReq.getDescription();
+        Integer enable = idsPolicyReq.getEnable();
+        List<String> newSecurityPolicyIds = idsPolicyReq.getSecurityPolicyIds();
+        List<String> oldSecurityPolicyIds = JsonUtils.parseArray(idsPolicy.getSecurityPolicyIds(), String.class);
+
+        auditClient.getAccessKey();
+        auditClient.getToken();
+        //策略集合不变：状态变更、描述变更
+        if (newSecurityPolicyIds.containsAll(oldSecurityPolicyIds)) {
+            if (!enable.equals(idsPolicy.getEnable()) || !description.equals(idsPolicy.getDescription())) {
+                for (Integer id : ids) {
+                    IpAuditDTO ipAuditDTO = auditClient.get(id);
+                    ipAuditDTO.setEnable(enable);
+                    ipAuditDTO.setDesc(description);
+                    auditClient.addOrUpdate(ipAuditDTO);
+                }
+            }
+        } else {
+            List<String> list1 = oldSecurityPolicyIds.stream().collect(Collectors.toList());
+            List<String> list2 = newSecurityPolicyIds.stream().collect(Collectors.toList());
+            //oldSecurityPolicyIds与newSecurityPolicyIds的差集，则删除
+            list1.removeAll(newSecurityPolicyIds);
+            List<String> allIpAudits = this.getAllIpAudit(list1);
+            //此次需要删除APT的IP检测id集合
+            List<Integer> needDeleteIds =
+                    auditClient.list().stream().filter(o -> allIpAudits.contains(o.getIp())).map(IpAuditDTO::getId).collect(Collectors.toList());
+            ids.removeAll(needDeleteIds);
+            auditClient.delete(needDeleteIds.toArray(new Integer[]{}));
+
+            //newSecurityPolicyIds与oldSecurityPolicyIds的差集，则添加
+            list2.removeAll(oldSecurityPolicyIds);
+            IdsPolicyReq req = new IdsPolicyReq();
+            req.setSecurityPolicyIds(list2);
+            req.setEnable(enable);
+            req.setDescription(description);
+            ids.addAll(this.addIpAudit(req));
+        }
+
+        IdsPolicy idsPolicy1 = this.getIdsPolicy(idsPolicyReq);
+        idsPolicy1.setAptIpAuditIds(JsonUtils.toJSONString(ids));
+        idsPolicyMapper.update(idsPolicy1,
+                new LambdaQueryWrapper<IdsPolicy>().eq(IdsPolicy::getIdsPolicyId, idsPolicyReq.getIdsPolicyId()));
+    }
+
+
+    public static void main(String[] args) {
+        List<String> list1 = new ArrayList<>();
+        list1.add("a");
+//        list1.add("b");
+        List<String> list2 = new ArrayList<>();
+        list2.add("b");
+//        list2.add("c");
+
+        list1.removeAll(list2);
+        System.out.println(list1);
+
+//        List<String> list6 = list2.stream().collect(Collectors.toList());
+//        list6.removeAll(list1);
+//        System.out.println(list6);
+
+        //不在原集合中即添加，
+        //在原集合中即不变
+//[a] 不变
+//[b] 删除
+//[c] 添加
+
     }
 
     /**

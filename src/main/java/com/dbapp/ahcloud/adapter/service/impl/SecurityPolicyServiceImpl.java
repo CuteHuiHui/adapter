@@ -45,12 +45,11 @@ public class SecurityPolicyServiceImpl implements SecurityPolicyService {
                 .eq(SecurityPolicy::getIsDeleted, YesOrNo.NO.getValue()));
         if (CollectionUtils.isEmpty(securityPolicies)) {
             throw ServiceInvokeException.newException("securityPolicyId:" + policyId + "安全策略不存在或者已删除");
-        } else {
-            SecurityPolicy securityPolicy = new SecurityPolicy();
-            securityPolicy.setIsDeleted(YesOrNo.YES.getValue());
-            securityPolicyMapper.update(securityPolicy,
-                    new LambdaQueryWrapper<SecurityPolicy>().eq(SecurityPolicy::getSecurityPolicyId, policyId));
         }
+        SecurityPolicy securityPolicy = new SecurityPolicy();
+        securityPolicy.setIsDeleted(YesOrNo.YES.getValue());
+        securityPolicyMapper.update(securityPolicy,
+                new LambdaQueryWrapper<SecurityPolicy>().eq(SecurityPolicy::getSecurityPolicyId, policyId));
     }
 
     @Override
@@ -60,12 +59,11 @@ public class SecurityPolicyServiceImpl implements SecurityPolicyService {
                 .eq(SecurityPolicy::getIsDeleted, YesOrNo.NO.getValue()));
         if (CollectionUtils.isEmpty(securityPolicies)) {
             throw ServiceInvokeException.newException("securityPolicyId:" + securityPolicyReq.getSecurityPolicyId() + "安全策略不存在或者已删除");
-        } else {
-            SecurityPolicy securityPolicy = this.getSecurityPolicy(securityPolicyReq);
-            securityPolicyMapper.update(securityPolicy,
-                    new LambdaQueryWrapper<SecurityPolicy>().eq(SecurityPolicy::getSecurityPolicyId,
-                            securityPolicyReq.getSecurityPolicyId()));
         }
+        SecurityPolicy securityPolicy = this.getSecurityPolicy(securityPolicyReq);
+        securityPolicyMapper.update(securityPolicy,
+                new LambdaQueryWrapper<SecurityPolicy>().eq(SecurityPolicy::getSecurityPolicyId,
+                        securityPolicyReq.getSecurityPolicyId()));
     }
 
     @Override
