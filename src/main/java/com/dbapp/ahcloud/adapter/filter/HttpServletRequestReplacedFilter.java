@@ -1,7 +1,5 @@
 package com.dbapp.ahcloud.adapter.filter;
 
-import com.dbapp.ahcloud.adapter.support.RequestReaderHttpServletRequestWrapper;
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;

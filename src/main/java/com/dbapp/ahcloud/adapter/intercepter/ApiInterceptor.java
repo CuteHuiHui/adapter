@@ -115,7 +115,7 @@ public class ApiInterceptor extends HandlerInterceptorAdapter {
                 Long.parseLong(requestDto.getTonce()));
 
         //**tonce与当前时间超过300s则无效
-        if (intervalTime > 300000000 * 1000000) {
+        if (intervalTime > 300000000) {
             log.warn("当前时间与请求头中的tonce相差300s, tonce={}, now={}", requestDto.getTonce(), System.currentTimeMillis());
             throw ServiceInvokeException.newException(ResponseCodeEnum.AUTHENTICATION_FAIL.code() + "");
         }

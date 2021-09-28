@@ -2,6 +2,7 @@ package com.dbapp.ahcloud.adapter.controller.f01;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dbapp.ahcloud.adapter.req.SecurityPolicyReq;
+import com.dbapp.ahcloud.adapter.response.ResponseBase;
 import com.dbapp.ahcloud.adapter.service.impl.SecurityPolicyServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,31 +31,31 @@ public class SecurityPolicyController {
     private SecurityPolicyServiceImpl securityPolicyService;
 
     @PostMapping({"/policy"})
-    public void addSecurityPolicy(@RequestBody String requestString, @RequestHeader(value = "origin_json", required =
-            false) String originHeader) {
-        log.info("安全策略addSecurityPolicy requestString is: " + requestString + ", origin header is: " + originHeader);
+    public ResponseBase addSecurityPolicy(@RequestBody String requestString) {
+        log.info("安全策略addSecurityPolicy requestString is: " + requestString);
         SecurityPolicyReq securityPolicyReq =
                 JSONObject.parseObject(JSONObject.parseObject(requestString).getJSONObject("data").toJSONString(),
                         SecurityPolicyReq.class);
         securityPolicyService.addSecurityPolicy(securityPolicyReq);
+        return new ResponseBase();
     }
 
     @DeleteMapping({"/policy/{policy_id}"})
-    public void deleteSecurityPolicy(@PathVariable("policy_id") String policyId,
-                                     @RequestHeader(value = "origin_json", required = false) String originHeader) {
-        log.info("安全策略deleteSecurityPolicy policy_id is: " + policyId + ", origin header is: " + originHeader);
+    public ResponseBase deleteSecurityPolicy(@PathVariable("policy_id") String policyId) {
+        log.info("安全策略deleteSecurityPolicy policy_id is: " + policyId);
         securityPolicyService.delteSecurityPolicy(policyId);
+        return new ResponseBase();
     }
 
     @PutMapping({"/policy/{policy_id}"})
-    public void modifySecurityPolicy(@PathVariable("policy_id") String policyId, @RequestBody String requestString,
-                                     @RequestHeader(value = "origin_json", required = false) String originHeader) {
-        log.info("安全策略modifySecurityPolicy policy_id is: " + policyId + ",requestString is: " + requestString + ",origin header" +
-                " is: " + originHeader);
+    public ResponseBase modifySecurityPolicy(@PathVariable("policy_id") String policyId,
+                                             @RequestBody String requestString) {
+        log.info("安全策略modifySecurityPolicy policy_id is: " + policyId + ",requestString is: " + requestString);
         SecurityPolicyReq securityPolicyReq =
                 JSONObject.parseObject(JSONObject.parseObject(requestString).getJSONObject("data").toJSONString(),
                         SecurityPolicyReq.class);
         securityPolicyReq.setSecurityPolicyId(policyId);
         securityPolicyService.modifySecurityPolicy(securityPolicyReq);
+        return new ResponseBase();
     }
 }

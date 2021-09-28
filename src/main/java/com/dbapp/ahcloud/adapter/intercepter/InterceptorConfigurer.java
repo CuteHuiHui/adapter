@@ -1,6 +1,5 @@
-package com.dbapp.ahcloud.adapter.support;
+package com.dbapp.ahcloud.adapter.intercepter;
 
-import com.dbapp.ahcloud.adapter.intercepter.ApiInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
