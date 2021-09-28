@@ -18,11 +18,10 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler(Exception.class)
     public ResponseBase exception(Exception ex) {
-        if (ex instanceof MyServiceException) {
-            ex.printStackTrace();
+        ex.printStackTrace();
+        if (ex instanceof DefineException) {
             return ResponseBase.otherErrorResponseBase(ex.getMessage());
-        }else{
-            ex.printStackTrace();
+        } else {
             return ResponseBase.internalErrorResponseBase();
         }
     }

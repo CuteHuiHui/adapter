@@ -5,9 +5,9 @@ package com.dbapp.ahcloud.adapter.exception;
  * Date:     2021/9/28 11:15
  * @version 1.0
  */
-public class MyServiceException extends Exception {
+public class DefineException extends Exception {
 
-    public MyServiceException(String msg) {
+    public DefineException(String msg) {
         super(msg);
     }
 }

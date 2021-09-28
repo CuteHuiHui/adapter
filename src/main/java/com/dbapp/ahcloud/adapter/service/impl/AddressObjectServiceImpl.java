@@ -1,6 +1,5 @@
 package com.dbapp.ahcloud.adapter.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.dbapp.ahcloud.adapter.dao.AddressObjectMapper;
@@ -86,38 +85,6 @@ public class AddressObjectServiceImpl implements AddressObjectService {
         addressObject.setObjectList(JsonUtils.toJSONString(addressObjectReq.getObjectList()));
         addressObject.setExceptObjectList(JsonUtils.toJSONString(addressObjectReq.getExceptObjectList()));
         return addressObject;
-    }
-
-
-    public static void main(String[] args) {
-//        List<AddressObjectReq.ObjectListItem> objectList = new ArrayList<>();
-//        List<AddressObjectReq.ObjectListItem> objectList1 = new ArrayList<>();
-//        AddressObjectReq.ObjectListItem o1 = new AddressObjectReq.ObjectListItem();
-//        o1.setAddress("1.1.1.1");
-//        o1.setType("network");
-//        AddressObjectReq.ObjectListItem o2 = new AddressObjectReq.ObjectListItem();
-//        o2.setAddress("1.1.1.1");
-//        o2.setType("network");
-//        objectList.add(o1);
-//        objectList.add(o2);
-//        String s = JsonUtils.toJSONString(objectList);
-//        System.out.println(s);
-//        List<AddressObjectReq.ObjectListItem> objectListItems = JSONObject.parseArray(s,
-//                AddressObjectReq.ObjectListItem.class);
-//
-//        List<String> collect =
-//                objectListItems.stream().map(AddressObjectReq.ObjectListItem::getAddress).collect(Collectors.toList());
-//
-//        System.out.println(11111);
-
-        List<String> a = new ArrayList<>();
-        a.add("aaa");
-        a.add("bbb");
-        System.out.println(JsonUtils.toJSONString(a));
-
-
-        System.out.println(JSONObject.parseArray(JsonUtils.toJSONString(a),String.class));
-        System.out.println(JSONObject.parseArray(JsonUtils.toJSONString(a),String.class));
     }
 
 }
