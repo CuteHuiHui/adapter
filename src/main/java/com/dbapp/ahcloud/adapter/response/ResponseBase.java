@@ -17,13 +17,17 @@ public class ResponseBase<T> implements Serializable {
     private String msg;
 
     public ResponseBase() {
-        status_code = ResponseCodeEnum.REQUEST_OPERATION_SUCCESS.code();
-        msg = ResponseCodeEnum.REQUEST_OPERATION_SUCCESS.msg();
+        status_code = Integer.valueOf(ResponseCodeEnum.REQUEST_OPERATION_SUCCESS.getCode());
+        msg = ResponseCodeEnum.REQUEST_OPERATION_SUCCESS.getMsg();
     }
 
-    public static ResponseBase ErrorResponseBase() {
-        return new ResponseBase(ResponseCodeEnum.AUTHENTICATION_FAIL.code(),
-                ResponseCodeEnum.AUTHENTICATION_FAIL.msg());
+    public static ResponseBase internalErrorResponseBase() {
+        return new ResponseBase(Integer.valueOf(ResponseCodeEnum.INTERNAL_ERROR.getCode()),
+                ResponseCodeEnum.INTERNAL_ERROR.getMsg());
+    }
+
+    public static ResponseBase otherErrorResponseBase(String status_code) {
+        return new ResponseBase(Integer.valueOf(status_code), ResponseCodeEnum.getMsg(status_code));
     }
 
     public ResponseBase(int status_code, String msg) {

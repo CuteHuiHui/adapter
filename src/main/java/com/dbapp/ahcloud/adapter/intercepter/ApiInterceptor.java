@@ -3,9 +3,9 @@ package com.dbapp.ahcloud.adapter.intercepter;
 
 import cn.hutool.crypto.SecureUtil;
 import com.dbapp.ahcloud.adapter.enums.ResponseCodeEnum;
+import com.dbapp.ahcloud.adapter.exception.MyServiceException;
 import com.dbapp.ahcloud.adapter.req.AuthorizationReq;
 import com.dbapp.ahcloud.adapter.util.HttpHelper;
-import com.dbapp.xplan.common.exception.ServiceInvokeException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +67,7 @@ public class ApiInterceptor extends HandlerInterceptorAdapter {
                 log.info("------接口认证通过------");
             }
         } catch (Exception e) {
-            throw ServiceInvokeException.newException(ResponseCodeEnum.AUTHENTICATION_FAIL.code() + "");
+            throw new MyServiceException(ResponseCodeEnum.AUTHENTICATION_FAIL.getCode());
         }
         return true;
     }
@@ -100,15 +100,15 @@ public class ApiInterceptor extends HandlerInterceptorAdapter {
 
 
     private void authCheck(AuthorizationReq requestDto) throws UnsupportedEncodingException, NoSuchAlgorithmException,
-            InvalidKeyException {
+            InvalidKeyException, MyServiceException {
 
         if (StringUtils.isBlank(requestDto.getTonce())) {
             log.warn("请求头中tonce为空");
-            throw ServiceInvokeException.newException(ResponseCodeEnum.AUTHENTICATION_FAIL.code() + "");
+            throw new MyServiceException(ResponseCodeEnum.AUTHENTICATION_FAIL.getCode());
         }
         if (requestDto.getTonce().length() < 16) {
             log.warn("请求头中tonce长度小于16位, tonce={}", requestDto.getTonce());
-            throw ServiceInvokeException.newException(ResponseCodeEnum.AUTHENTICATION_FAIL.code() + "");
+            throw new MyServiceException(ResponseCodeEnum.AUTHENTICATION_FAIL.getCode());
         }
 
         long intervalTime = Math.subtractExact(System.currentTimeMillis() * 1000,
@@ -117,7 +117,7 @@ public class ApiInterceptor extends HandlerInterceptorAdapter {
         //**tonce与当前时间超过300s则无效
         if (intervalTime > 300000000) {
             log.warn("当前时间与请求头中的tonce相差300s, tonce={}, now={}", requestDto.getTonce(), System.currentTimeMillis());
-            throw ServiceInvokeException.newException(ResponseCodeEnum.AUTHENTICATION_FAIL.code() + "");
+            throw new MyServiceException(ResponseCodeEnum.AUTHENTICATION_FAIL.getCode());
         }
         //**根据请求信息生成服务端的签名**//
         //**1拼接签名串**PUT /V1.0/ctcontrol/O03/ip_group_object/5dac60ac-ab51-4a52-afbd-5950aaaedb77//
@@ -145,7 +145,7 @@ public class ApiInterceptor extends HandlerInterceptorAdapter {
         String nowAuthorization = encoder.encodeToString(author.getBytes("UTF-8"));
         if (!StringUtils.equalsIgnoreCase(nowAuthorization, requestDto.getAuthorization())) {
             log.warn("请求头中的authorization与服务端生成{}的不一致:{}", nowAuthorization, requestDto.getAuthorization());
-            throw ServiceInvokeException.newException(ResponseCodeEnum.AUTHENTICATION_FAIL.code() + "");
+            throw new MyServiceException(ResponseCodeEnum.AUTHENTICATION_FAIL.getCode());
         }
     }
 
