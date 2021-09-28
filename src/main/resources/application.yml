@@ -6,6 +6,8 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/ids_adapter?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&failOverReadOnly=false&useSSL=false&serverTimezone=CTT
     username: root
     password: '123456'
+  application:
+    name: adapter
 
 plat:
   authorization:

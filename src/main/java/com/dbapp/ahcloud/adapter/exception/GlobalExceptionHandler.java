@@ -18,7 +18,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler(Exception.class)
     public ResponseBase exception(Exception ex) {
-        ex.printStackTrace();
+        log.error("", ex);
         if (ex instanceof DefineException) {
             return ResponseBase.otherErrorResponseBase(ex.getMessage());
         } else {
