@@ -145,7 +145,7 @@ public class ApiInterceptor extends HandlerInterceptorAdapter {
         Base64.Encoder encoder = Base64.getEncoder();
         String nowAuthorization = encoder.encodeToString(author.getBytes("UTF-8"));
         if (!StringUtils.equalsIgnoreCase(nowAuthorization, requestDto.getAuthorization())) {
-            log.warn("请求头中的authorization与服务端生成{}的不一致:{}", nowAuthorization, requestDto.getAuthorization());
+            log.warn("请求头中的authorization:{}与服务端生成的:{}不一致", requestDto.getAuthorization(), nowAuthorization);
             throw new DefineException(ResponseCodeEnum.AUTHENTICATION_FAIL.getCode());
         }
     }

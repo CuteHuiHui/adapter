@@ -11,6 +11,6 @@ spring:
 
 plat:
   authorization:
-    authFlag: true
+    authFlag: false
     accesskey: aaa
     secretKey: bbb

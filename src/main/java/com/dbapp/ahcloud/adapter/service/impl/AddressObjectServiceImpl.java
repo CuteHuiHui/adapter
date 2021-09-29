@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 地址对象
@@ -33,19 +34,20 @@ public class AddressObjectServiceImpl implements AddressObjectService {
 
     @Override
     public void addAddressObject(AddressObjectReq addressObjectReq) {
+        if (!Objects.isNull(this.selectAddressObject(addressObjectReq.getIpObjectId()))) {
+            throw ServiceInvokeException.newException("ipObjectId:" + addressObjectReq.getIpObjectId() + "地址对象已存在");
+        }
         AddressObject addressObject = this.getAddressObject(addressObjectReq);
         addressObjectMapper.insert(addressObject);
     }
 
     @Override
     public void deleteAddressObject(String ipObjectId) {
-        List<AddressObject> addressObjects = addressObjectMapper.selectList(new LambdaQueryWrapper<AddressObject>()
-                .eq(AddressObject::getIpObjectId, ipObjectId)
-                .eq(AddressObject::getIsDeleted, YesOrNo.NO.getValue()));
-        if (CollectionUtils.isEmpty(addressObjects)) {
+        AddressObject addressObject = this.selectAddressObject(ipObjectId);
+        if (Objects.isNull(addressObject)) {
             throw ServiceInvokeException.newException("ipObjectId:" + ipObjectId + "地址对象不存在或者已删除");
         }
-        AddressObject addressObject = new AddressObject();
+
         addressObject.setIsDeleted(YesOrNo.YES.getValue());
         addressObjectMapper.update(addressObject,
                 new LambdaQueryWrapper<AddressObject>().eq(AddressObject::getIpObjectId, ipObjectId));
@@ -53,13 +55,11 @@ public class AddressObjectServiceImpl implements AddressObjectService {
 
     @Override
     public void modifyAddressObject(AddressObjectReq addressObjectReq) {
-        List<AddressObject> addressObjects = addressObjectMapper.selectList(new LambdaQueryWrapper<AddressObject>()
-                .eq(AddressObject::getIpObjectId, addressObjectReq.getIpObjectId())
-                .eq(AddressObject::getIsDeleted, YesOrNo.NO.getValue()));
-        if (CollectionUtils.isEmpty(addressObjects)) {
+        if (Objects.isNull(this.selectAddressObject(addressObjectReq.getIpObjectId()))) {
             throw ServiceInvokeException.newException("ipObjectId:" + addressObjectReq.getIpObjectId() +
                     "地址对象不存在或者已删除");
         }
+
         AddressObject addressObject = this.getAddressObject(addressObjectReq);
         addressObjectMapper.update(addressObject,
                 new LambdaQueryWrapper<AddressObject>().eq(AddressObject::getIpObjectId,
@@ -67,7 +67,7 @@ public class AddressObjectServiceImpl implements AddressObjectService {
     }
 
     @Override
-    public List<AddressObject> getAddressObjects(List<String> ipObjectIds) {
+    public List<AddressObject> getAddressObjectList(List<String> ipObjectIds) {
         List<AddressObject> addressObjects = addressObjectMapper.selectList(new LambdaQueryWrapper<AddressObject>()
                 .in(AddressObject::getIpObjectId, ipObjectIds)
                 .eq(AddressObject::getIsDeleted, YesOrNo.NO.getValue()));
@@ -87,4 +87,9 @@ public class AddressObjectServiceImpl implements AddressObjectService {
         return addressObject;
     }
 
+    private AddressObject selectAddressObject(String ipObjectId) {
+        return addressObjectMapper.selectOne(new LambdaQueryWrapper<AddressObject>()
+                .eq(AddressObject::getIpObjectId, ipObjectId)
+                .eq(AddressObject::getIsDeleted, YesOrNo.NO.getValue()));
+    }
 }

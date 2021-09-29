@@ -20,5 +20,5 @@ public interface AddressObjectService {
 
     void modifyAddressObject(AddressObjectReq addressObjectReq);
 
-    List<AddressObject> getAddressObjects(List<String> ipObjectIds);
+    List<AddressObject> getAddressObjectList(List<String> ipObjectIds);
 }

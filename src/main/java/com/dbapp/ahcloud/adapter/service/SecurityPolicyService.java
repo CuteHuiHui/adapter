@@ -22,6 +22,6 @@ public interface SecurityPolicyService {
 
     SecurityPolicy getSecurityPolicy(String securityPolicyId);
 
-    List<SecurityPolicy> getSecurityPolicies(List<String> securityPolicyIds);
+    List<SecurityPolicy> getSecurityPolicieList(List<String> securityPolicyIds);
 
 }

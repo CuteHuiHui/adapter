@@ -83,7 +83,7 @@
                 </configuration>
             </plugin>
 
-            <!-- ahcloud-upgrade.jar中生成BOOT-INF\classes\git.properties-->
+            <!-- *.jar中生成BOOT-INF\classes\git.properties-->
             <plugin>
                 <groupId>pl.project13.maven</groupId>
                 <artifactId>git-commit-id-plugin</artifactId>
