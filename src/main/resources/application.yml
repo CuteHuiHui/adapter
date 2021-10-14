@@ -16,6 +16,6 @@ spring:
 
 plat:
   authorization:
-    authFlag: false
-    accesskey: aaa
-    secretKey: bbb
+    authFlag: true
+    accesskey: f6feadca-38c9-471e-ba9f-fcd3eefddfbc
+    secretKey: f6fsdfaca-40c9-871e-ba9f-fcd3eefdabcd
